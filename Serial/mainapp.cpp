@@ -45,6 +45,8 @@ void MainApp::InitMainAPP(void){
     connect(ui->ClearShowBtn,SIGNAL(clicked()),this,SLOT(ClearShow()));
     connect(ui->RefreshBtn,SIGNAL(clicked()),this,SLOT(PushData()));
 
+    //设置显示文本超过100行自动清除
+    ui->ShowtextEdit->document()->setMaximumBlockCount(100);
 }
 
 //slots
@@ -63,6 +65,10 @@ void MainApp::OpenBtnClick(void){
         baudrate = QSerialPort::Baud9600;
     }else if(baudrates == "4800"){
         baudrate = QSerialPort::Baud4800;
+    }else if(baudrates == "2400"){
+        baudrate = QSerialPort::Baud2400;
+    }else if(baudrates == "1200"){
+        baudrate = QSerialPort::Baud1200;
     }
 
     QString stopbits_s = ui->StopBitcbBox->currentText();
@@ -86,8 +92,16 @@ void MainApp::OpenBtnClick(void){
     }
 
     QString checkbit_s = ui->CheckcbBox->currentText();
-    if(checkbit_s == "None"){
+    if(checkbit_s == "无校验"){
         checkbit = QSerialPort::NoParity;
+    }else if(checkbit_s == "奇校验"){
+        checkbit = QSerialPort::OddParity;
+    }else if(checkbit_s == "偶校验"){
+        checkbit = QSerialPort::EvenParity;
+    }else if(checkbit_s == "SpaceParity"){
+        checkbit = QSerialPort::SpaceParity;
+    }else if(checkbit_s == "MarkParity"){
+        checkbit = QSerialPort::MarkParity;
     }
 
     //设置串口
@@ -130,10 +144,10 @@ void MainApp::PushData(void){
 
         ui->SerialNumcbBox->addItems(serialnum_str);
 
-        baudrate_str<<"115200"<<"9600"<<"4800";
+        baudrate_str<<"1200"<<"2400"<<"4800"<<"9600"<<"19200"<<"38400"<<"115200"<<"custom";
         stopbit_str<<"1"<<"1.5"<<"2";
         databit_str<<"5"<<"6"<<"7"<<"8";
-        checkbit_str<<"None";
+        checkbit_str<<"无检验"<<"奇校验"<<"偶校验"<<"SpaceParity"<<"MarkParity";
 
 
         ui->BaudRatecbBox->addItems(baudrate_str);
@@ -155,7 +169,7 @@ void MainApp::ReadSerial(void){
     QString buf;
     QByteArray bytearray = serialport->readAll();
     buf = QTextCodec::codecForName("GB2312")->toUnicode(bytearray);
-    ui->ShowtextEdit->append(buf);
+    ui->ShowtextEdit->insertPlainText(buf);
 
 }
 //串口发送
