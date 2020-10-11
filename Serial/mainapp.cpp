@@ -45,8 +45,6 @@ void MainApp::InitMainAPP(void){
     connect(ui->ClearShowBtn,SIGNAL(clicked()),this,SLOT(ClearShow()));
     connect(ui->RefreshBtn,SIGNAL(clicked()),this,SLOT(PushData()));
 
-    //设置显示文本超过100行自动清除
-    ui->ShowtextEdit->document()->setMaximumBlockCount(100);
 }
 
 //slots
@@ -103,6 +101,7 @@ void MainApp::OpenBtnClick(void){
     }else if(checkbit_s == "MarkParity"){
         checkbit = QSerialPort::MarkParity;
     }
+
 
     //设置串口
     serialport->setPortName(ui->SerialNumcbBox->currentText().split("(")[0]);
@@ -169,7 +168,7 @@ void MainApp::ReadSerial(void){
     QString buf;
     QByteArray bytearray = serialport->readAll();
     buf = QTextCodec::codecForName("GB2312")->toUnicode(bytearray);
-    ui->ShowtextEdit->insertPlainText(buf);
+    ui->ShowtextEdit->append(buf);
 
 }
 //串口发送
